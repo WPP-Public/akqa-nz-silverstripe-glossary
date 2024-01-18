@@ -213,7 +213,7 @@ const sanitiseShortCodeProperties = (rawProperties) => {
       onSubmit(dialogApi) {
         const termID = dialogApi.getData().glossary;
         // The selected text to be inserted a terminology
-        const selectedText = editor.selection.getContent();
+        const selectedText = editor.selection.getContent({format : 'text'});
         // No text was selected
         if (!selectedText) {
           // update value if we're on an allready valid node

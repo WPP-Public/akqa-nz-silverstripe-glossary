@@ -1,5 +1,5 @@
 {
-    "name": "thesceneman/silverstripe-glossary",
+    "name": "jack-akqa/silverstripe-glossary",
     "description": "Adds a Glossary section to CMS admin where glossary terms can be defined. These terms can then be added to content via the WYSIWYG and the definitions will be rendered as interactive rollovers within webpage content.",
     "type": "silverstripe-vendormodule",
     "authors": [

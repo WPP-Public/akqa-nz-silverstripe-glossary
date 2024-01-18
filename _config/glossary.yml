@@ -7,4 +7,4 @@ SilverStripe\Control\Director:
 
 SilverStripe\Forms\HTMLEditor\TinyMCEConfig:
   editor_css:
-    - 'vendor/thesceneman/silverstripe-glossary/client/dist/styles/bundle.css'
+    - 'vendor/jack-akqa/silverstripe-glossary/client/dist/styles/bundle.css'

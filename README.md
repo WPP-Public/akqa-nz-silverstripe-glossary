@@ -17,7 +17,7 @@ version ^0.2
 ## Installation
 
 ```
-composer require jack-akqa/silverstripe-glossary
+composer require heyday/silverstripe-glossary
 ```
 
 ## Usage

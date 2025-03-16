@@ -181,7 +181,7 @@ const sanitiseShortCodeProperties = (rawProperties) => {
     const currentValue = currentNode?.dataset.id ?? firstItem.value;
   
     // Determine if we need search input based on data length
-    const showSearch = data.length > 20;
+    const showSearch = data.length > 15;
   
     let filteredData = [...data];
   

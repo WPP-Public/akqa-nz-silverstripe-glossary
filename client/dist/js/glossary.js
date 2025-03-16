@@ -179,33 +179,56 @@ const sanitiseShortCodeProperties = (rawProperties) => {
     const [firstItem, ...rest] = data;
     const currentNode = editor?.selection.getNode();
     const currentValue = currentNode?.dataset.id ?? firstItem.value;
-    editor.windowManager.open({
-      title: "Glossary",
-      size: 'normal',
-      // Add a listbox(dropdown list) to the modal, it enables us to select a terminology
-      body: {
-        type: 'panel',
-        items: [
+  
+    // Determine if we need search input based on data length
+    const showSearch = data.length > 20;
+  
+    let filteredData = [...data];
+  
+    const fields = showSearch
+      ? [
+          {
+            type: "input",
+            name: "search",
+            label: "Search",
+            placeholder: "Start typing to search...",
+          },
           {
             type: "listbox",
             name: "glossary",
             label: "Glossary",
-            items: data,
+            items: filteredData,
           },
-        ],
+        ]
+      : [
+          {
+            type: "listbox",
+            name: "glossary",
+            label: "Glossary",
+            items: filteredData,
+          },
+        ];
+  
+    const modalConfig = {
+      title: "Glossary",
+      size: "normal",
+      body: {
+        type: "panel",
+        items: fields,
       },
       initialData: {
         glossary: currentValue,
+        ...(showSearch && { search: "" }),
       },
       buttons: [
         {
-          type: 'submit',
-          text: 'OK'
+          type: "submit",
+          text: "OK",
         },
         {
-          type: 'cancel',
-          text: 'Cancel'
-        }
+          type: "cancel",
+          text: "Cancel",
+        },
       ],
       // Submit event handler. It will be triggered when the 'OK' button is clicked.
       // It gets the selected terminology id and insert it to the selected text in the format of the example code:
@@ -213,12 +236,15 @@ const sanitiseShortCodeProperties = (rawProperties) => {
       onSubmit(dialogApi) {
         const termID = dialogApi.getData().glossary;
         // The selected text to be inserted a terminology
-        const selectedText = editor.selection.getContent({format : 'text'});
+        const selectedText = editor.selection.getContent({ format: "text" });
         // No text was selected
         if (!selectedText) {
           // update value if we're on an allready valid node
           const currentNode = editor.selection.getNode();
-          if (currentNode && currentNode?.dataset?.shortcode === 'glossary_term') {
+          if (
+            currentNode &&
+            currentNode?.dataset?.shortcode === "glossary_term"
+          ) {
             currentNode.dataset.id = termID;
           }
           editor.windowManager.close();
@@ -227,7 +253,28 @@ const sanitiseShortCodeProperties = (rawProperties) => {
         editor.insertContent(newText);
         editor.windowManager.close();
       },
-    });
+    };
+  
+    if (showSearch) {
+      modalConfig.onChange = (dialogApi) => {
+        const dialogData = dialogApi.getData();
+        const searchTerm = dialogData.search.toLowerCase();
+  
+        // Filter the list based on search input using the unique data array
+        filteredData = data.filter((item) =>
+          item.text.toLowerCase().includes(searchTerm)
+        );
+  
+        // Update the listbox with filtered items
+        dialogApi.setData({
+          ...dialogData,
+          glossary: filteredData.length > 0 ? filteredData[0].value : "",
+          items: filteredData,
+        });
+      };
+    }
+  
+    editor.windowManager.open(modalConfig);
   };
 
   /**

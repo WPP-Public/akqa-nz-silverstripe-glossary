@@ -17,7 +17,7 @@ version ^0.2
 ## Installation
 
 ```
-composer require heyday/silverstripe-glossary
+composer require thesceneman/silverstripe-glossary
 ```
 
 ## Usage

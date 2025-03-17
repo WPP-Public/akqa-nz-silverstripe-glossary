@@ -17,5 +17,5 @@ HTMLEditorConfig::set_config('glossary', $restrictedConfig);
 // Add glossary button to WYSIWYG
 $editorConfig = HTMLEditorConfig::get(Environment::getEnv('HTML_EDITOR') ?? 'cms');
 $editorConfig->enablePlugins([
-    'glossary' => ModuleResourceLoader::resourceURL('vendor/heyday/silverstripe-glossary/client/dist/js/glossary.js'),
+    'glossary' => ModuleResourceLoader::resourceURL('vendor/thesceneman/silverstripe-glossary/client/dist/js/glossary.js'),
 ])->addButtonsToLine(3, 'ssglossary');

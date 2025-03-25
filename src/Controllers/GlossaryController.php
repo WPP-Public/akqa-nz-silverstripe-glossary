@@ -25,18 +25,25 @@ class GlossaryController extends Controller
 
         $result = [];
 
-        /** @var GlossaryTerm $glossaryTerm */
-        foreach (GlossaryTerm::get() as $glossaryTerm) {
-            // Get the latest version of the term
-            $latestVersion = Versioned::get_latest_version(GlossaryTerm::class, $glossaryTerm->ID);
+        // Get only Live versions of the terms with non-null titles
+        $terms = Versioned::get_by_stage(GlossaryTerm::class, Versioned::LIVE)
+            ->filter('Title:not', null);
 
-            if ($latestVersion) {
-                $result[] = [
-                    'text' => $latestVersion->Title,
-                    // TinyMCE requires the value should be string
-                    'value' => (string)$latestVersion->ID,
-                ];
+        // Create a map to store only the most recent version of each term
+        $uniqueTerms = [];
+        foreach ($terms as $term) {
+            if (!isset($uniqueTerms[$term->Title]) || $term->ID > $uniqueTerms[$term->Title]->ID) {
+                $uniqueTerms[$term->Title] = $term;
             }
+        }
+
+        // Convert the map to an array
+        foreach ($uniqueTerms as $glossaryTerm) {
+            $result[] = [
+                'text' => $glossaryTerm->Title,
+                // TinyMCE requires the value should be string
+                'value' => (string)$glossaryTerm->ID,
+            ];
         }
 
         $json = json_encode($result, JSON_PRETTY_PRINT);

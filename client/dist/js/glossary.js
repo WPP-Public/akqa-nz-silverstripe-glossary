@@ -183,22 +183,7 @@ const sanitiseShortCodeProperties = (rawProperties) => {
     // Determine if we need search input based on data length
     const showSearch = data.length > 15;
   
-    // Filter out empty entries
-    let filteredData = [...data].filter(
-      (item) =>
-        item &&
-        typeof item === "object" &&
-        item.text !== null &&
-        item.text !== undefined &&
-        item.value !== null &&
-        item.value !== undefined
-    );
-  
-    // Filter out duplicates based on value property
-    filteredData = filteredData.filter(
-      (item, index, self) =>
-        index === self.findIndex((t) => t.value === item.value)
-    );
+    let filteredData = [...data];
   
     const fields = showSearch
       ? [

@@ -183,12 +183,21 @@ const sanitiseShortCodeProperties = (rawProperties) => {
     // Determine if we need search input based on data length
     const showSearch = data.length > 15;
   
-    let filteredData = [...data];
-
+    // Filter out empty entries
+    let filteredData = [...data].filter(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        item.text !== null &&
+        item.text !== undefined &&
+        item.value !== null &&
+        item.value !== undefined
+    );
+  
     // Filter out duplicates based on value property
-    // backup just in case some duplicates exist
-    filteredData = filteredData.filter((item, index, self) =>
-      index === self.findIndex((t) => t.value === item.value)
+    filteredData = filteredData.filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.value === item.value)
     );
   
     const fields = showSearch
@@ -264,17 +273,31 @@ const sanitiseShortCodeProperties = (rawProperties) => {
     if (showSearch) {
       modalConfig.onChange = (dialogApi) => {
         const dialogData = dialogApi.getData();
-        const searchTerm = dialogData.search.toLowerCase();
+        const searchTerm = dialogData.search?.toLowerCase() || "";
+        const currentSelection = dialogData.glossary;
   
         // Filter the list based on search input using the unique data array
-        filteredData = data.filter((item) =>
-          item.text.toLowerCase().includes(searchTerm)
-        );
+        filteredData = data
+          .filter(
+            (item) =>
+              item &&
+              typeof item === "object" &&
+              item.text !== null &&
+              item.text !== undefined &&
+              item.value !== null &&
+              item.value !== undefined
+          )
+          .filter((item) => item.text.toLowerCase().includes(searchTerm));
   
         // Update the listbox with filtered items
         dialogApi.setData({
           ...dialogData,
-          glossary: filteredData.length > 0 ? filteredData[0].value : "",
+          // Preserve the current selection if it exists in filtered results, otherwise use first item
+          glossary: filteredData.find((item) => item.value === currentSelection)
+            ? currentSelection
+            : filteredData.length > 0
+            ? filteredData[0].value
+            : "",
           items: filteredData,
         });
       };
@@ -282,7 +305,7 @@ const sanitiseShortCodeProperties = (rawProperties) => {
   
     editor.windowManager.open(modalConfig);
   };
-
+  
   /**
    * Create a Glossary plugin
    * @param editor The active tinymce editor instance

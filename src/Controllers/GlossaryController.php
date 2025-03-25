@@ -7,6 +7,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Security\Security;
 use TheSceneman\SilverStripeGlossary\Model\GlossaryTerm;
+use SilverStripe\Versioned\Versioned;
 
 class GlossaryController extends Controller
 {
@@ -26,11 +27,16 @@ class GlossaryController extends Controller
 
         /** @var GlossaryTerm $glossaryTerm */
         foreach (GlossaryTerm::get() as $glossaryTerm) {
-            $result[] = [
-                'text' => $glossaryTerm->Title,
-                // TinyMce requires the value should be string
-                'value' => (string)$glossaryTerm->ID,
-            ];
+            // Get the latest version of the term
+            $latestVersion = Versioned::get_latest_version(GlossaryTerm::class, $glossaryTerm->ID);
+
+            if ($latestVersion) {
+                $result[] = [
+                    'text' => $latestVersion->Title,
+                    // TinyMCE requires the value should be string
+                    'value' => (string)$latestVersion->ID,
+                ];
+            }
         }
 
         $json = json_encode($result, JSON_PRETTY_PRINT);

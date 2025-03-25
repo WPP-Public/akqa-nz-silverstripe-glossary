@@ -184,6 +184,12 @@ const sanitiseShortCodeProperties = (rawProperties) => {
     const showSearch = data.length > 15;
   
     let filteredData = [...data];
+
+    // Filter out duplicates based on value property
+    // backup just in case some duplicates exist
+    filteredData = filteredData.filter((item, index, self) =>
+      index === self.findIndex((t) => t.value === item.value)
+    );
   
     const fields = showSearch
       ? [
